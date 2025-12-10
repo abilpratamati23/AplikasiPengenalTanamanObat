@@ -4,10 +4,10 @@ import { KaggleDatasetInfo } from '../types';
 const DatasetSection: React.FC = () => {
   const dataset: KaggleDatasetInfo = {
     title: "Medicinal Plant Dataset (Indonesia)",
-    url: "https://www.kaggle.com/datasets/example/indonesian-medicinal-plants", // Placeholder link
-    description: "Dataset ini berisi lebih dari 5,000 citra berkualitas tinggi dari 50 jenis tanaman obat populer di Indonesia. Digunakan untuk melatih model Computer Vision kami.",
+    url: "https://www.kaggle.com/datasets/nurdiankasim/tanaman-herbal", // Placeholder link
+    description: "Dataset ini berisi lebih dari 5,000 citra berkualitas tinggi dari 12 jenis tanaman obat populer di Indonesia. Digunakan untuk melatih model Computer Vision kami.",
     imageCount: "5,240+",
-    classes: ["Jahe", "Kunyit", "Lidah Buaya", "Sirih", "Daun Mint", "Kemangi", "Sambiloto"]
+    classes: ["Daun Kari", "Daun Kunyit", "Lidah Buaya", "Daun Sirih", "Daun Mint", "Daun Kemangi", "Daun Sirsak"]
   };
 
   return (
