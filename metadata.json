@@ -1,0 +1,7 @@
+{
+  "name": "Identifikasi Tanaman Obat",
+  "description": "Platform identifikasi tanaman obat modern berbasis AI dan Computer Vision.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
