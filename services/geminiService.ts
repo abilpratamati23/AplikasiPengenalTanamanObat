@@ -18,24 +18,31 @@ export const fileToBase64 = (file: File): Promise<string> => {
 };
 
 export const analyzePlantImage = async (base64Image: string): Promise<PlantAnalysis> => {
+  // Note: process.env.API_KEY is replaced by Vite at build time via define config
   const apiKey = process.env.API_KEY;
   if (!apiKey) {
-    throw new Error("API Key not found in environment variables");
+    throw new Error("API Key not found. Please configure VITE_API_KEY or API_KEY in your environment.");
   }
 
   const ai = new GoogleGenAI({ apiKey });
 
+  // Instruksi yang sangat eksplisit untuk Bahasa Indonesia
   const prompt = `
-    Analisis gambar tanaman ini dengan instruksi berikut:
-    1. Identifikasi nama tanaman (dalam Bahasa Indonesia) dan nama ilmiahnya.
-    2. Tentukan apakah ini termasuk tanaman obat (herbal).
-    3. Jika tanaman obat, sebutkan manfaatnya dalam Bahasa Indonesia dan berikan panduan pengolahan langkah-demi-langkah yang jelas.
-    4. Sebutkan efek samping yang mungkin ada.
-    5. Berikan skor kepercayaan (confidence score) 0-100.
-    6. Berikan estimasi metrik performa model (accuracy, precision, recall, f1Score) dalam rentang 85-99 yang mencerminkan kemampuan model AI dalam mendeteksi jenis tanaman spesifik ini.
+    Kamu adalah ahli botani dan pengobatan herbal Indonesia.
+    Tugasmu adalah menganalisis gambar tanaman ini dan memberikan output JSON SAJA.
     
-    PENTING: Semua teks penjelasan harus dalam Bahasa Indonesia yang baik dan benar.
-    Jika objek bukan tanaman, set isMedicinal ke false dan berikan nama "Objek Tidak Dikenal".
+    WAJIB GUNAKAN BAHASA INDONESIA UNTUK SEMUA FIELD TEKS.
+    
+    Instruksi Detail:
+    1. Identifikasi nama tanaman (Nama Lokal Indonesia) dan nama ilmiah (Latin).
+    2. Tentukan apakah tanaman ini lazim digunakan sebagai tanaman obat di Indonesia.
+    3. Jelaskan deskripsi singkat tanaman tersebut.
+    4. Sebutkan manfaat kesehatannya (khasiat).
+    5. Berikan panduan pengolahan/resep tradisional (langkah demi langkah).
+    6. Sebutkan efek samping atau peringatan konsumsi.
+    7. Berikan confidence score (0-100) dan metrik AI (accuracy, precision, dll).
+
+    Jika gambar bukan tanaman atau tidak jelas, set 'isMedicinal' ke false dan beri peringatan di deskripsi.
   `;
 
   try {
@@ -57,8 +64,8 @@ export const analyzePlantImage = async (base64Image: string): Promise<PlantAnaly
         responseSchema: {
           type: Type.OBJECT,
           properties: {
-            name: { type: Type.STRING },
-            scientificName: { type: Type.STRING },
+            name: { type: Type.STRING, description: "Nama lokal tanaman dalam Bahasa Indonesia" },
+            scientificName: { type: Type.STRING, description: "Nama latin/ilmiah" },
             confidence: { type: Type.NUMBER },
             mlMetrics: {
               type: Type.OBJECT,
@@ -70,10 +77,10 @@ export const analyzePlantImage = async (base64Image: string): Promise<PlantAnaly
               }
             },
             isMedicinal: { type: Type.BOOLEAN },
-            description: { type: Type.STRING },
+            description: { type: Type.STRING, description: "Deskripsi fisik dan habitat dalam Bahasa Indonesia" },
             benefits: {
               type: Type.ARRAY,
-              items: { type: Type.STRING }
+              items: { type: Type.STRING, description: "Manfaat dalam Bahasa Indonesia" }
             },
             processingGuide: {
               type: Type.ARRAY,
@@ -81,13 +88,13 @@ export const analyzePlantImage = async (base64Image: string): Promise<PlantAnaly
                 type: Type.OBJECT,
                 properties: {
                   step: { type: Type.NUMBER },
-                  instruction: { type: Type.STRING }
+                  instruction: { type: Type.STRING, description: "Instruksi langkah dalam Bahasa Indonesia" }
                 }
               }
             },
             sideEffects: {
               type: Type.ARRAY,
-              items: { type: Type.STRING }
+              items: { type: Type.STRING, description: "Efek samping dalam Bahasa Indonesia" }
             }
           }
         }
