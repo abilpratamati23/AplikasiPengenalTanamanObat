@@ -26,15 +26,16 @@ export const analyzePlantImage = async (base64Image: string): Promise<PlantAnaly
   const ai = new GoogleGenAI({ apiKey });
 
   const prompt = `
-    Analyze this image of a plant. 
-    1. Identify the plant name and scientific name.
-    2. Determine if it is commonly used as a medicinal plant (herbal medicine).
-    3. If it is medicinal, list its benefits and provide a step-by-step processing guide on how to use it for health purposes.
-    4. List any potential side effects.
-    5. Provide a confidence score (0-100) based on visual clarity.
-    6. Provide estimated performance metrics (accuracy, precision, recall, f1Score) that a state-of-the-art CNN model would typically achieve when identifying this specific plant species. Return these as percentages (85-99).
+    Analisis gambar tanaman ini dengan instruksi berikut:
+    1. Identifikasi nama tanaman (dalam Bahasa Indonesia) dan nama ilmiahnya.
+    2. Tentukan apakah ini termasuk tanaman obat (herbal).
+    3. Jika tanaman obat, sebutkan manfaatnya dalam Bahasa Indonesia dan berikan panduan pengolahan langkah-demi-langkah yang jelas.
+    4. Sebutkan efek samping yang mungkin ada.
+    5. Berikan skor kepercayaan (confidence score) 0-100.
+    6. Berikan estimasi metrik performa model (accuracy, precision, recall, f1Score) dalam rentang 85-99 yang mencerminkan kemampuan model AI dalam mendeteksi jenis tanaman spesifik ini.
     
-    If it is NOT a plant, set isMedicinal to false and name to "Unknown Object".
+    PENTING: Semua teks penjelasan harus dalam Bahasa Indonesia yang baik dan benar.
+    Jika objek bukan tanaman, set isMedicinal ke false dan berikan nama "Objek Tidak Dikenal".
   `;
 
   try {
@@ -44,7 +45,7 @@ export const analyzePlantImage = async (base64Image: string): Promise<PlantAnaly
         parts: [
           {
             inlineData: {
-              mimeType: 'image/jpeg', // Assuming jpeg/png, Gemini handles standard image types well
+              mimeType: 'image/jpeg',
               data: base64Image
             }
           },
@@ -96,7 +97,7 @@ export const analyzePlantImage = async (base64Image: string): Promise<PlantAnaly
     if (response.text) {
       return JSON.parse(response.text) as PlantAnalysis;
     } else {
-      throw new Error("No response text from Gemini");
+      throw new Error("Tidak ada respon dari AI");
     }
   } catch (error) {
     console.error("Gemini Analysis Error:", error);
